@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot_model">
+    <!-- impoer file parameter เข้ามาจากโฟลเดอร์เพื่อใช้รวมกับไฟล์นี้ เป็นไฟล์กำหนดค่าตัวแปรต่างๆ -->
+    <xacro:include filename="$(find ros_pack)/models/parameter.xacro"/>
+    <!-- impoer file ที่ใช้เพื่อประกอบเป็นหุ่น -->
+    <xacro:include filename="$(find ros_pack)/models/body.xacro"/>
+    <xacro:include filename="$(find ros_pack)/models/wheel.xacro"/>
+     <!-- impoer file กล้องและlidar เพื่อมาประกอบและใช้งานกับตัวหุ่น -->
+    <xacro:include filename="$(find ros_pack)/lidar/lidar.xacro"/>
+    <xacro:include filename="$(find ros_pack)/camera/camera.xacro"/>
+    <!-- กำหนดค่าตัวแปรที่ต้องใช้ เช่น ระยะที่ทำการเลื่อนเฟรม และชื่อของเฟรมนั้นๆ -->
+    <xacro:body/>
+    <xacro:wheel
+        name="right_wheel"
+        translation="0.0 ${-((bodyLenght / 2) + 0.015)} 0.0"
+        rotation="0.0 0.0 0.0"/>
+    <xacro:wheel
+        name="left_wheel"
+        translation="0.0 ${(bodyLenght / 2) + 0.015} 0.0"
+        rotation="0.0 0.0 0.0"/>
+    
+    <xacro:plidar/>
+    <xacro:camera/>
+
+
+</robot>

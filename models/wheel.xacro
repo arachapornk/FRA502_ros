@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!-- ระบุว่าใช้ .xacro ในการเขียน -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot_wheel">
+    <!-- impoer file parameter เข้ามาจากโฟลเดอร์เพื่อใช้รวมกับไฟล์นี้ เป็นไฟล์กำหนดค่าตัวแปรต่างๆ -->
+    <xacro:include filename="$(find ros_pack)/models/parameter.xacro"/>
+    
+    <xacro:macro name="wheel" params="name translation rotation">
+        <!-- สร้างล้อขึ้นมาเพื่อใช้งาน เป็นล้อจากทรงกระบอก ขนาด d=20 , หนา 3 เซนติเมตร กำหนดค่าตำแหน่งที่ล้ออยู่ใน origin และกำหนดให้เป็นสีขาว รวมทั้งกำหนดค่า ineertia and center of mass ให้หุ่นยนต์ ใส่ค่า colllision ในกับหุ่นเป็นการเพิ่ม gavity-->
+        <link name="${name}">
+            <visual>
+                <geometry>
+                    <cylinder length="0.03" radius="0.10"/>
+                </geometry>
+                <origin rpy="${-PI / 2} 0.0 0.0" xyz="0.0 0.0 0.0"/>       
+                <!---"${rpy_link}" xyz="${xyz_link}"/--> 
+                <material name="black">
+                    <color rgba="0 0 0 1"/>
+                </material>
+            </visual>
+            <inertial>
+                <origin xyz="${WHEEL_COM}" rpy="0.0 0.0 0.0"/>
+                <mass value="${WHEEL_M}"/>
+                <inertia ixx="${WHEEL_Ixx}" ixy="${WHEEL_Ixy}" ixz="${WHEEL_Ixz}" iyy="${WHEEL_Iyy}" iyz="${WHEEL_Iyz}" izz="${WHEEL_Izz}"/>
+            </inertial>
+            <collision>
+                <geometry>
+                    <cylinder length="0.03" radius="0.10"/>
+                </geometry>
+                <origin rpy="${-PI / 2} 0.0 0.0" xyz="0.0 0.0 0.0"/>       
+                <!---"${rpy_link}" xyz="${xyz_link}"/--> 
+            </collision>
+        </link>
+
+        <joint name="base_link_to_${name}" type="continuous">
+            <axis xyz="0.0 1.0 0.0"/>
+            <parent link="base_link"/>
+            <child link="${name}"/>
+            <origin xyz="${translation}" rpy="${rotation}"/>
+            <limit effort="${U_MAX}" velocity="${V_MAX}"/>
+            <joint_properties damping="${WHEEL_JOINT_DAMP}" friction="0.0"/>
+        </joint>
+
+        <gazebo reference="${name}_wheel">
+            <mu1>1</mu1>
+            <mu2>1</mu2>
+        </gazebo>
+        <!--plugin สำหรับ differential_drive_controller-->
+        <gazebo>
+            <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+
+                <updateRate>10</updateRate>
+
+            
+                <robotBaseFrame>base_link</robotBaseFrame>
+                <leftJoint>base_link_to_left_wheel</leftJoint>
+                <rightJoint>base_link_to_right_wheel</rightJoint>
+                
+            
+                <wheelSeparation>0.065</wheelSeparation>
+                <wheelDiameter>0.1</wheelDiameter>
+                <wheelAcceleration>0.5</wheelAcceleration>
+                <wheelTorque>10.0</wheelTorque>
+
+            
+                <commandTopic>key_teleop</commandTopic>
+                <odometryTopic>odom</odometryTopic>
+                <odometryFrame>odom</odometryFrame>
+                <publishTf>1</publishTf>
+                <publishWheelJointState>true</publishWheelJointState>
+                <legacyMode>false</legacyMode>
+
+            </plugin>
+        </gazebo>
+
+    </xacro:macro>
+</robot>

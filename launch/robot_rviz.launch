@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!--GUI เพื่อใช้ทดลองการหมุนของล้อว่าถูกทิศทางหรือไม่-->
+    <param name="use_gui" value="True"/>
+    <param name="robot_description" command="$(find xacro)/xacro $(find ros_pack)/models/robot_model.xacro"/>
+    <!--สร้าง Node ต่างๆที่ใช้กับหุ่น-->
+    <node pkg="robot_state_publisher" name="robot_state_publisher" type="robot_state_publisher"/>
+    <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher"/>
+    <!--เรียก rviz-->
+    <node pkg="rviz" name="rivz" type="rviz" args="-d $(find ros_pack)/rviz/robot.rviz"/>
+
+
+
+
+
+</launch>

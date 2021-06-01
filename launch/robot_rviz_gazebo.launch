@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- impoer file world ที่สร้างขึ้นมา นำมาใช้เป็น world ในกับหุ่น -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find ros_pack)/world/house.world"/>
+    </include>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(find ros_pack)/models/robot_model.xacro"/>
+    <!-- สร้าง Node ต่างๆที่ใช้กับหุ่น -->
+    <node pkg="robot_state_publisher" name="robot_state_publisher" type="robot_state_publisher"/>
+    <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher"/>
+    <!-- เรียก rviz -->
+    <node pkg="rviz" name="rivz" type="rviz" args="-d $(find ros_pack)/rviz/robot.rviz"/>
+    <!-- เรียก gazebo -->
+    <node pkg="gazebo_ros" type="spawn_model" name="urdf_spawner" respawn="false" output="screen" args="-urdf -model my_robot -param robot_description"/>
+
+
+</launch>
